@@ -1,80 +1,46 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kraken | Даркнет Маркетплейс</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0a0a0a;
-            color: #e0e0e0;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid #333;
-        }
-        h1 {
-            color: #4CAF50;
-            font-size: 2.5em;
-            margin: 0;
-        }
-        .logo {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .content {
-            padding: 20px 0;
-        }
-        .telegram-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #0088cc;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .telegram-btn:hover {
-            background-color: #006699;
-        }
-        footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            border-top: 1px solid #333;
-            font-size: 0.9em;
-            color: #777;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">🦑</div>
-            <h1>Kraken</h1>
-            <p>Даркнет Маркетплейс</p>
-        </header>
+import { useState } from "react"; import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button";
 
-        <div class="content">
-            <p>Добро пожаловать в Kraken — место, где можно найти всё.</p>
-            <p>Анонимность. Надёжность. Свобода.</p>
-            
-            <a href="https://t.me/+NfwiHsfribFlOGQy" class="telegram-btn">Перейти в Telegram</a>
+const mockUsers = [ { username: "alex", name: "Alex", messages: ["Привет!"] }, { username: "maria", name: "Maria", messages: ["Привет, как дела?"] }, ];
+
+export default function TelegramStyleApp() { const [username, setUsername] = useState(""); const [name, setName] = useState(""); const [loggedUser, setLoggedUser] = useState(null); const [search, setSearch] = useState(""); const [selectedUser, setSelectedUser] = useState(null); const [message, setMessage] = useState("");
+
+const handleRegister = () => { if (username && name) { setLoggedUser({ username, name }); } };
+
+const filteredUsers = mockUsers.filter( (user) => user.username.includes(search.toLowerCase()) && user.username !== loggedUser?.username );
+
+const sendMessage = () => { if (message) { selectedUser.messages.push(${loggedUser.username}: ${message}); setMessage(""); } };
+
+if (!loggedUser) { return ( <div className="p-4 max-w-md mx-auto"> <h1 className="text-xl mb-4">Регистрация</h1> <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="mb-2" /> <Input placeholder="Имя" value={name} onChange={(e) => setName(e.target.value)} className="mb-2" /> <Button onClick={handleRegister}>Зарегистрироваться</Button> </div> ); }
+
+return ( <div className="flex h-screen"> <div className="w-1/3 border-r p-4"> <h2 className="text-lg font-bold mb-2">Поиск</h2> <Input placeholder="Введите username" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4" /> {filteredUsers.map((user) => ( <div key={user.username} className="p-2 hover:bg-gray-200 cursor-pointer rounded" onClick={() => setSelectedUser(user)} > {user.name} (@{user.username}) </div> ))} </div>
+
+<div className="flex-1 p-4">
+    {selectedUser ? (
+      <div>
+        <h2 className="text-xl font-bold mb-4">
+          Чат с {selectedUser.name} (@{selectedUser.username})
+        </h2>
+        <div className="h-[60vh] overflow-y-auto border p-2 rounded bg-gray-50 mb-4">
+          {selectedUser.messages.map((msg, idx) => (
+            <div key={idx} className="mb-1">
+              {msg}
+            </div>
+          ))}
         </div>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Сообщение"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <Button onClick={sendMessage}>Отправить</Button>
+        </div>
+      </div>
+    ) : (
+      <p className="text-gray-500">Выберите пользователя для начала общения</p>
+    )}
+  </div>
+</div>
 
-        <footer>
-            <p>Поддержано Kraken © 2025</p>
-        </footer>
-    </div>
-</body>
-</html>
+); }
+
